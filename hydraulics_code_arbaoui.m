@@ -48,6 +48,7 @@ PR_max = 8; % Pente de la route maximale [%]
 PR_moy = (PR_min+PR_max)/2; % Pente de la route moyenne
 PR_ecart = 2.67; % Ecart type de la Pente de la route
 Pmoy = double(zeros(1,N_cycle));
+Pmax = double(zeros(1,N_cycle));
 TR=double(zeros(1, 6e3));
 D_reel=double(zeros(1, 6e3));
 V_reel=double(zeros(1, 6e3));
@@ -148,6 +149,7 @@ for z = 1:N_cycle
     Tme(1:i) = TR(1:i)';
     Pis(1:i)= V_R(1:i).*Ft_sim(1:i);
     Pmoy(z)=mean(Pis(1:i));
+    Pmax(z)=max(Pis(1:i));
     %% affichage des résultats %%%%%
 %    figure(1); 
 %    %subplot(3,2,1);
