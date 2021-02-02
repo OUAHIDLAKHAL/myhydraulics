@@ -47,8 +47,10 @@ PR_min = -8; % Pente de la route minimale [%]
 PR_max = 8; % Pente de la route maximale [%]
 PR_moy = (PR_min+PR_max)/2; % Pente de la route moyenne
 PR_ecart = 2.67; % Ecart type de la Pente de la route
-Pmoy = double(zeros(1,N_cycle));
-Pmax = double(zeros(1,N_cycle));
+Pmoy_m = double(zeros(1,N_cycle)); % la puissance moyenne en regime moteur 
+Pmax_m = double(zeros(1,N_cycle)); % la puissance max en regime moteur 
+Pmoy_r = double(zeros(1,N_cycle)); % la puissance moyenne en regime generateur 
+Pmax_r = double(zeros(1,N_cycle)); % la puissance max en regime generateur 
 TR=double(zeros(1, 6e3));
 D_reel=double(zeros(1, 6e3));
 V_reel=double(zeros(1, 6e3));
@@ -148,8 +150,29 @@ for z = 1:N_cycle
     V_R(1:i) = V_reel1(1:i)';
     Tme(1:i) = TR(1:i)';
     Pis(1:i)= V_R(1:i).*Ft_sim(1:i);
-    Pmoy(z)=mean(Pis(1:i));
-    Pmax(z)=max(Pis(1:i));
+    Pmoy_r(z) = 0;
+    Pmoy_m(z) = 0;
+    nbr_m=0;
+    for j=1:i
+      if (Pis(j) > 0)
+        Pmoy_m(z) = Pmoy_m(z) + Pis(j);
+        nbr_m=nbr_m+1;
+      else
+        Pmoy_r(z) = Pmoy_r(z) + Pis(j);
+      end
+    end
+    Pmoy_m(z)=Pmoy_m(z)/nbr_m;
+    Pmoy_r(z)=Pmoy_r(z)/(i-nbr_m);
+    Pmax_m(z)=0;
+    Pmax_r(z)=0;
+    for j=1:i
+      if (Pis(j) > 0) && (Pis(j) > Pmax_m(z))
+        Pmax_m(z) = Pis(j);
+      end
+      if (Pis(j) < 0) && (Pis(j) < Pmax_r(z))
+        Pmax_r(z) = Pis(j);
+      end
+    end
     %% affichage des résultats %%%%%
 %    figure(1); 
 %    %subplot(3,2,1);
